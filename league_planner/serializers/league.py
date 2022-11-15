@@ -1,13 +1,14 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from league_planner.models.league import League
 
 
 class LeagueSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
+    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = League
-        fields = (
-            "name",
-        )
+        fields = ("id", "name", "owner")

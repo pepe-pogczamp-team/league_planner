@@ -1,22 +1,25 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 
-UserModel = get_user_model()
+from typing import TYPE_CHECKING
+
+from django.contrib.auth.models import User
+
+if TYPE_CHECKING:
+    from typing import Dict
 
 
-class UserSerializer(serializers.ModelSerializer):
-
+class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
-    def create(self, validated_data):
-
-        user = UserModel.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-        )
-
+    def create(self, validated_data: "Dict") -> "User":
+        user = User.objects.create_user(**validated_data)
         return user
 
     class Meta:
-        model = UserModel
-        fields = ("id", "username", "password")
+        model = User
+        fields = (
+            "id",
+            "username",
+            "password",
+        )
+        extra_kwargs = {"password": {"write_only": True}}

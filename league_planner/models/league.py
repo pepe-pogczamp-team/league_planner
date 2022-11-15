@@ -1,6 +1,18 @@
-from django.db.models import Model
+from django.contrib.auth.models import User
 from django.db import models
 
 
-class League(Model):
-    name = models.CharField(max_length=50)
+class League(models.Model):
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Owner of League",
+        related_name="owners",
+    )
+
+    class Meta:
+        ordering = ["id"]
