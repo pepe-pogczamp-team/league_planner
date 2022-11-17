@@ -6,7 +6,7 @@
 
 | **field** | **value**     |
 |:----------|---------------|
-| name      | league_planer |
+| name      | league_planner |
 | user      | postgres      |
 | password  | postgres      |
 | port      | 5432          |
