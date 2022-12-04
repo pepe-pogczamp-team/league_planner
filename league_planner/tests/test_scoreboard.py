@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -24,18 +26,47 @@ def test_scoreboard(
         name="Argentyna",
         league=league,
     )
+    team3 = team_factory.create(
+        name="Meksyk",
+        league=league,
+    )
     match_factory.create(
         league=league,
         host=team1,
         visitor=team2,
         host_score=0,
         visitor_score=2,
+        datetime=datetime.now(),
+    )
+    match_factory.create(
+        league=league,
+        host=team1,
+        visitor=team3,
+        host_score=0,
+        visitor_score=0,
+        datetime=datetime.now(),
+    )
+    match_factory.create(
+        league=league,
+        host=team3,
+        visitor=team2,
+        host_score=0,
+        visitor_score=2,
+        datetime=datetime.now(),
+    )
+    match_factory.create(
+        league=league,
+        host=None,
+        visitor=None,
+        datetime=datetime.now(),
     )
     response = api_client.get(f"{url}scoreboard/")
     assert response.status_code == status.HTTP_200_OK, response
-    assert response.data["count"] == 2
-    teams = response.data["results"]
+    assert len(response.data) == 3
+    teams = response.data
     assert teams[0]["name"] == "Argentyna"
-    assert teams[0]["score"] == 3
-    assert teams[1]["name"] == "Polska"
-    assert teams[1]["score"] == 0
+    assert teams[1]["name"] == "Meksyk"
+    assert teams[2]["name"] == "Polska"
+    assert teams[0]["score"] == 6
+    assert teams[1]["score"] == 1
+    assert teams[2]["score"] == 1
