@@ -13,3 +13,12 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ("id", "league", "name", "city")
+
+
+class ScoreboardSerializer(TeamSerializer):
+    score = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Team
+        fields = ("id", "league", "name", "city", "score")
+

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from league_planner.models.league import League
 from league_planner.models.match import Match
 from league_planner.models.team import Team
+from league_planner.settings import DEFAULT_DATETIME_FORMAT
 
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -16,13 +17,22 @@ class MatchSerializer(serializers.ModelSerializer):
         queryset=Team.objects.all(),
         required=False,
     )
-    host_score = serializers.IntegerField(required=False)
-    visitor_score = serializers.IntegerField(required=False)
+    host_score = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+    )
+    visitor_score = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+    )
     address = serializers.CharField(
         max_length=50,
         required=False,
     )
-    datetime = serializers.DateTimeField(required=False)
+    datetime = serializers.DateTimeField(
+        required=False,
+        format=DEFAULT_DATETIME_FORMAT,
+    )
 
     class Meta:
         model = Match

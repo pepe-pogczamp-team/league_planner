@@ -11,14 +11,14 @@ class Match(models.Model):
         "league_planner.Team",
         on_delete=models.SET_NULL,
         verbose_name="Host Team",
-        related_name="hosts",
+        related_name="host",
         null=True,
     )
     visitor = models.ForeignKey(
         "league_planner.Team",
         on_delete=models.SET_NULL,
         verbose_name="Visitor Team",
-        related_name="visitors",
+        related_name="visitor",
         null=True,
     )
     host_score = models.IntegerField(
@@ -38,3 +38,6 @@ class Match(models.Model):
         verbose_name="Time when match is played",
         null=True,
     )
+
+    class Meta:
+        verbose_name_plural = "matches"
