@@ -1,24 +1,27 @@
 # league_planner
 
-### 1. prerequisites:
-* python
-* postgres
+League planner backend service in Django. 
 
-### 2. setup db:
+### How to run server locally:
 
-| **field** | **value**     |
-|:----------|---------------|
-| name      | league_planner |
-| user      | postgres      |
-| password  | postgres      |
-| port      | 5432          |
+1. prerequisites:
+    * python
+    * postgres
 
-### 3. install requirements from requirements.txt
+2. setup db:
+    | **field** | **value**     |
+    |:----------|---------------|
+    | name      | league_planner |
+    | user      | postgres      |
+    | password  | postgres      |
+    | port      | 5432          |
+
+3. install requirements from requirements.txt
     $ pip install --upgrade pip
     $ pip install -r requirements.txt
 
-### 4. run migrations
+4. run migrations
     $ python manage.py migrate
 
-### 5. run server
+5. run server
     $ python manage.py runserver 8000
