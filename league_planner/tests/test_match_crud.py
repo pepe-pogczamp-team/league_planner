@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import pytest
 from datetime import datetime
 from django.urls import reverse
@@ -7,6 +9,9 @@ from rest_framework.test import APIClient
 from factories import LeagueFactory, TeamFactory, MatchFactory
 from league_planner.models.match import Match
 from league_planner.settings import DEFAULT_DATETIME_FORMAT
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import User
 
 pytestmark = [pytest.mark.django_db]
 
@@ -76,8 +81,9 @@ def test_match_create(
     league_factory: "LeagueFactory",
     team_factory: "TeamFactory",
     create_match_data: dict,
+    test_user: "User",
 ) -> None:
-    league = league_factory.create()
+    league = league_factory.create(owner=test_user)
     host = team_factory.create(league=league)
     visitor = team_factory.create(league=league)
     create_match_data["league"] = league.pk
@@ -114,8 +120,9 @@ def test_match_update(
     league_factory: "LeagueFactory",
     match_factory: "MatchFactory",
     create_match_data: dict,
+    test_user: "User",
 ) -> None:
-    league = league_factory.create()
+    league = league_factory.create(owner=test_user)
     host = team_factory.create(league=league)
     visitor = team_factory.create(league=league)
     create_match_data["league"] = league
@@ -142,10 +149,35 @@ def test_match_update(
 def test_match_destroy(
     api_client: "APIClient",
     match_factory: "MatchFactory",
+    test_user: "User",
 ) -> None:
-    match = match_factory.create()
+    match = match_factory.create(league__owner=test_user)
     url = reverse("matches-detail", args=[match.pk])
     response = api_client.delete(url)
     assert response.status_code == status.HTTP_204_NO_CONTENT, response
     with pytest.raises(Match.DoesNotExist):
         Match.objects.get(id=match.pk)
+
+
+def test_match_user_is_not_owner(
+    api_client: "APIClient",
+    match_factory: "MatchFactory",
+) -> None:
+    match = match_factory.create()
+    url = reverse("matches-detail", args=[match.pk])
+    response = api_client.delete(url)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response
+    response = api_client.patch(url)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response
+
+
+def test_match_create_user_is_not_league_owner(
+    api_client: "APIClient",
+    league_factory: "LeagueFactory",
+    create_match_data: dict,
+) -> None:
+    league = league_factory.create()
+    create_match_data["league"] = league.pk
+    url = reverse("teams-list")
+    response = api_client.post(url, data=create_match_data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response
