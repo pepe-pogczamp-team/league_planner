@@ -62,7 +62,9 @@ def test_league_update(
     api_client: "APIClient",
     league_factory: "LeagueFactory",
     create_league_data: dict,
+    test_user: "User",
 ) -> None:
+    create_league_data["owner"] = test_user
     league = league_factory.create(**create_league_data)
     url = reverse("leagues-detail", args=[league.pk])
     update_data = {"name": "WNBA"}
@@ -78,8 +80,9 @@ def test_league_destroy(
     league_factory: "LeagueFactory",
     team_factory: "TeamFactory",
     match_factory: "MatchFactory",
+    test_user: "User",
 ) -> None:
-    league = league_factory.create()
+    league = league_factory.create(owner=test_user)
     team = team_factory.create(league=league)
     match = match_factory.create(league=league, host=team)
     url = reverse("leagues-detail", args=[league.pk])
@@ -91,3 +94,15 @@ def test_league_destroy(
         Team.objects.get(id=team.pk)
     with pytest.raises(Match.DoesNotExist):
         Match.objects.get(id=match.pk)
+
+
+def test_league_user_is_not_owner(
+    api_client: "APIClient",
+    league_factory: "LeagueFactory",
+) -> None:
+    league = league_factory.create()
+    url = reverse("leagues-detail", args=[league.pk])
+    response = api_client.delete(url)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response
+    response = api_client.patch(url)
+    assert response.status_code == status.HTTP_403_FORBIDDEN, response

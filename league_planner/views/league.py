@@ -1,8 +1,7 @@
-from django.db.models import Case, Exists, F, Func, OuterRef, Prefetch, Q, QuerySet, Subquery, Sum, \
-    Value, \
-    When
+from django.db.models import Case, F, QuerySet, Value, When
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -19,6 +18,7 @@ from league_planner.models.league import League
 from league_planner.models.match import Match
 from league_planner.models.team import Team
 from league_planner.pagination import Pagination
+from league_planner.permissions import IsLeagueOwner
 from league_planner.serializers.league import LeagueSerializer
 from league_planner.serializers.team import ScoreboardSerializer
 
@@ -34,9 +34,13 @@ class LeagueViewSet(
     UpdateModelMixin,
     DestroyModelMixin,
 ):
+    permission_classes = (IsAuthenticated, IsLeagueOwner)
     queryset = League.objects.all()
     serializer_class = LeagueSerializer
     pagination_class = Pagination
+    POINTS_PER_WIN = 3
+    POINTS_PER_DRAW = 1
+    POINTS_PER_LOSE = 0
 
     def create(self: "Self", request: "Request", *args: "Any", **kwargs: "Any") -> "Response":
         request.data["owner"] = request.user.pk
@@ -70,17 +74,16 @@ class LeagueViewSet(
     def teams_queryset(league_id: int) -> "QuerySet":
         return Team.objects.filter(league_id=league_id).all()
 
-    @staticmethod
-    def matches_with_points_queryset(league_id: int) -> "QuerySet":
+    def matches_with_points_queryset(self: "Self", league_id: int) -> "QuerySet":
         return Match.objects.filter(league_id=league_id).annotate(
             host_points=Case(
-                When(host_score__gt=F("visitor_score"), then=Value(3)),
-                When(host_score=F("visitor_score"), then=Value(1)),
-                default=Value(0),
+                When(host_score__gt=F("visitor_score"), then=Value(self.POINTS_PER_WIN)),
+                When(host_score=F("visitor_score"), then=Value(self.POINTS_PER_DRAW)),
+                default=Value(self.POINTS_PER_LOSE),
             ),
             visitor_points=Case(
-                When(visitor_score__gt=F("host_score"), then=Value(3)),
-                When(visitor_score=F("host_score"), then=Value(1)),
-                default=Value(0),
+                When(visitor_score__gt=F("host_score"), then=Value(self.POINTS_PER_WIN)),
+                When(visitor_score=F("host_score"), then=Value(self.POINTS_PER_DRAW)),
+                default=Value(self.POINTS_PER_LOSE),
             )
         )
