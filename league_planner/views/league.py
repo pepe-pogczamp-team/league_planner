@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.db.models import Case, F, QuerySet, Value, When
 from rest_framework import status
 from rest_framework.decorators import action
@@ -68,7 +70,13 @@ class LeagueViewSet(
             scoreboard.append(team)
         scoreboard.sort(key=lambda team: (team.score, team.score_as_visitor), reverse=True)
         data = ScoreboardSerializer(scoreboard, many=True).data
-        return Response(data=data, status=status.HTTP_200_OK)
+        rest_response_data = OrderedDict(
+            count=len(data),
+            next=None,
+            previous=None,
+            results=data,
+        )
+        return Response(data=rest_response_data, status=status.HTTP_200_OK)
 
     @staticmethod
     def teams_queryset(league_id: int) -> "QuerySet":

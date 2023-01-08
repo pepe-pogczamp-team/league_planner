@@ -62,8 +62,8 @@ def test_scoreboard(
     )
     response = api_client.get(f"{url}scoreboard/")
     assert response.status_code == status.HTTP_200_OK, response
-    assert len(response.data) == 3
-    teams = response.data
+    assert len(response.data["results"]) == 3
+    teams = response.data["results"]
     assert teams[0]["name"] == "Argentyna"
     assert teams[1]["name"] == "Meksyk"
     assert teams[2]["name"] == "Polska"
