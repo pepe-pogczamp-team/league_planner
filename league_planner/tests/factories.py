@@ -48,4 +48,4 @@ class MatchFactory(DjangoModelFactory):
 
     class Meta:
         model = Match
-        django_get_or_create = ("host", "visitor", "datetime")
+        django_get_or_create = ("host", "visitor", "datetime", "address")

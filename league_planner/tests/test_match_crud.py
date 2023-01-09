@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from factories import LeagueFactory, TeamFactory, MatchFactory
+from .factories import LeagueFactory, TeamFactory, MatchFactory
 from league_planner.models.match import Match
 from league_planner.settings import DEFAULT_DATETIME_FORMAT
 
@@ -41,7 +41,7 @@ def test_matches_list(
             league=league,
             host=host,
             visitor=visitor,
-            datetime=datetime.now(),
+            address=f"address {i}",
         )
     response = api_client.get(url)
     assert response.status_code == status.HTTP_200_OK, response

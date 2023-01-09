@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from factories import LeagueFactory, MatchFactory, TeamFactory
+from .factories import LeagueFactory, MatchFactory, TeamFactory
 from league_planner.models.league import League
 from league_planner.models.match import Match
 from league_planner.models.team import Team

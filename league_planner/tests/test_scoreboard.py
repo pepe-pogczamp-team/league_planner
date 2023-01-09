@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from factories import LeagueFactory, TeamFactory, MatchFactory
+from .factories import LeagueFactory, TeamFactory, MatchFactory
 
 pytestmark = [pytest.mark.django_db]
 

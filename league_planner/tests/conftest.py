@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from typing import Generator
 from pytest_factoryboy import register
 
-from factories import LeagueFactory, TeamFactory, MatchFactory, UserFactory
+from .factories import LeagueFactory, TeamFactory, MatchFactory, UserFactory
 
 pytestmark = [pytest.mark.django_db]
 
