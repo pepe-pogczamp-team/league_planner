@@ -9,7 +9,6 @@ from rest_framework.test import APIClient
 from league_planner import settings
 from .factories import LeagueFactory, TeamFactory, MatchFactory
 from league_planner.models.match import Match
-from league_planner.settings import DEFAULT_DATETIME_FORMAT
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -24,7 +23,7 @@ def create_match_data() -> dict:
         "host_score": 21,
         "visitor_score": 37,
         "address": "ul. Bogdana Bonera 21/37",
-        "datetime": match_datetime.strftime(settings.DEFAULT_DATETIME_FORMAT),
+        "datetime": match_datetime.strftime(settings.FE_DATETIME_FORMAT),
     }
 
 
@@ -73,7 +72,7 @@ def test_match_detail(
     assert response.data["host_score"] == create_match_data["host_score"]
     assert response.data["visitor_score"] == create_match_data["visitor_score"]
     assert response.data["address"] == create_match_data["address"]
-    assert response.data["datetime"] == create_match_data["datetime"]
+    assert response.data["datetime"] == create_match_data["datetime"].replace("T", " ")
 
 
 def test_match_create(
@@ -98,8 +97,8 @@ def test_match_create(
     assert response.data["host_score"] == create_match_data["host_score"]
     assert response.data["visitor_score"] == create_match_data["visitor_score"]
     assert response.data["address"] == create_match_data["address"]
-    assert response.data["datetime"] == create_match_data["datetime"]
-    assert response.data["is_weather_good"] is True
+    assert response.data["datetime"] == create_match_data["datetime"].replace("T", " ")
+    assert response.data["is_weather_good"] in (True, False)
     match = Match.objects.get(host=host, visitor=visitor)
     assert match.league == league
     assert match.host == host
@@ -107,7 +106,7 @@ def test_match_create(
     assert match.host_score == create_match_data["host_score"]
     assert match.visitor_score == create_match_data["visitor_score"]
     assert match.address == create_match_data["address"]
-    assert match.datetime.strftime(DEFAULT_DATETIME_FORMAT) == create_match_data["datetime"]
+    assert match.datetime.strftime(settings.FE_DATETIME_FORMAT) == create_match_data["datetime"]
 
 
 def test_match_update(

@@ -46,7 +46,7 @@ class MatchViewSet(
         host_city = Team.objects.get(id=request.data.get("host")).city
         match_datetime = datetime.datetime.strptime(
             request.data.get("datetime"),
-            settings.DEFAULT_DATETIME_FORMAT,
+            settings.FE_DATETIME_FORMAT,
         )
 
         if host_city and match_datetime:
