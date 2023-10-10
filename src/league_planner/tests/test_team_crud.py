@@ -5,8 +5,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from .factories import LeagueFactory, MatchFactory, TeamFactory
 from league_planner.models.team import Team
+
+from .factories import LeagueFactory, MatchFactory, TeamFactory
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -16,17 +17,10 @@ pytestmark = [pytest.mark.django_db]
 
 @pytest.fixture()
 def create_team_data() -> dict:
-    return {
-        "name": "RKS Chuwdu",
-        "city": "Kurwix"
-    }
+    return {"name": "RKS Chuwdu", "city": "Kurwix"}
 
 
-def test_teams_list(
-    api_client: "APIClient",
-    league_factory: "LeagueFactory",
-    team_factory: "TeamFactory"
-) -> None:
+def test_teams_list(api_client: "APIClient", league_factory: "LeagueFactory", team_factory: "TeamFactory") -> None:
     url = reverse("teams-list")
     league = league_factory.create()
     for i in range(10):
@@ -39,11 +33,7 @@ def test_teams_list(
     assert response.data["count"] == 10
 
 
-def test_teams_filtering(
-    api_client: "APIClient",
-    league_factory: "LeagueFactory",
-    team_factory: "TeamFactory"
-) -> None:
+def test_teams_filtering(api_client: "APIClient", league_factory: "LeagueFactory", team_factory: "TeamFactory") -> None:
     url = reverse("teams-list")
     league1 = league_factory.create(name="NBA")
     league2 = league_factory.create(name="WNBA")

@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('league_planner', '0008_alter_match_host_alter_match_visitor'),
+        ("league_planner", "0008_alter_match_host_alter_match_visitor"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='match',
-            options={'verbose_name_plural': 'matches'},
+            name="match",
+            options={"verbose_name_plural": "matches"},
         ),
     ]

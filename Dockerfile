@@ -48,5 +48,5 @@ WORKDIR /code/src
 ENTRYPOINT ["/code/docker-entrypoint.sh"]
 
 # Runs the production server
-CMD ["ddtrace-run", "uvicorn", "main_fastapi:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["gunicorn", "--config", "gunicorn_config.py", "omnichannel.wsgi:application"]
 

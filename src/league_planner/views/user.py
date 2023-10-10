@@ -1,16 +1,13 @@
+from typing import Any
+
 from django.contrib.auth.models import User
-from rest_framework import permissions, viewsets, mixins
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.request import Request
 from rest_framework.response import Response
 
-from typing import TYPE_CHECKING
-
 from league_planner.serializers.user import CreateUserSerializer
-
-if TYPE_CHECKING:
-    from rest_framework.request import Request
-    from typing import Any
 
 
 class CreateUserView(
@@ -23,7 +20,7 @@ class CreateUserView(
 
 
 class LoginView(ObtainAuthToken):
-    def post(self, request: "Request", *args: "Any", **kwargs: "Any") -> "Response":
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = self.serializer_class(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data.get("user")

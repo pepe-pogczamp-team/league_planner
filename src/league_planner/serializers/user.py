@@ -1,17 +1,11 @@
-from rest_framework import serializers
-
-from typing import TYPE_CHECKING
-
 from django.contrib.auth.models import User
-
-if TYPE_CHECKING:
-    from typing import Dict
+from rest_framework import serializers
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
-    def create(self, validated_data: "Dict") -> "User":
+    def create(self, validated_data: dict) -> User:
         user = User.objects.create_user(**validated_data)
         return user
 

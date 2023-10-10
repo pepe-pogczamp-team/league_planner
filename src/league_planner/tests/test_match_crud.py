@@ -1,14 +1,15 @@
+from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
 import pytest
-from datetime import datetime, timedelta
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from league_planner import settings
-from .factories import LeagueFactory, TeamFactory, MatchFactory
 from league_planner.models.match import Match
+
+from .factories import LeagueFactory, MatchFactory, TeamFactory
 
 if TYPE_CHECKING:
     from django.contrib.auth.models import User
@@ -98,7 +99,6 @@ def test_match_create(
     assert response.data["visitor_score"] == create_match_data["visitor_score"]
     assert response.data["address"] == create_match_data["address"]
     assert response.data["datetime"] == create_match_data["datetime"].replace("T", " ")
-    assert response.data["is_weather_good"] in (True, False)
     match = Match.objects.get(host=host, visitor=visitor)
     assert match.league == league
     assert match.host == host

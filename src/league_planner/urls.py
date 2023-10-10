@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
 from league_planner.views.league import LeagueViewSet
@@ -15,7 +15,7 @@ router.register("register", CreateUserView, "register")
 
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('admin/', admin.site.urls),
-    path('login/', LoginView.as_view()),
+    path("", include(router.urls)),
+    path("admin/", admin.site.urls),
+    path("login/", LoginView.as_view()),
 ]

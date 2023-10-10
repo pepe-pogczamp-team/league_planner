@@ -7,7 +7,7 @@ from league_planner.settings import DEFAULT_DATETIME_FORMAT
 
 
 class MatchSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(read_only=True)  # noqa: A003
     league = serializers.PrimaryKeyRelatedField(queryset=League.objects.all())
     host = serializers.PrimaryKeyRelatedField(
         queryset=Team.objects.all(),

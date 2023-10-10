@@ -11,7 +11,7 @@ from league_planner.models.team import Team
 
 class UserFactory(DjangoModelFactory):
     username = Sequence(lambda n: f"name{n}")
-    password = "password"
+    password = "password"  # noqa: S105
 
     class Meta:
         model = User

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('league_planner', '0005_alter_league_options_alter_team_city_alter_team_name'),
+        ("league_planner", "0005_alter_league_options_alter_team_city_alter_team_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='team',
-            name='city',
-            field=models.CharField(default='Not Set', max_length=50),
+            model_name="team",
+            name="city",
+            field=models.CharField(default="Not Set", max_length=50),
         ),
     ]

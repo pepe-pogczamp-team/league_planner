@@ -1,21 +1,21 @@
 from collections import OrderedDict
+from typing import Any
 
 from django.db.models import Case, F, QuerySet, Value, When
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import (
-    CreateModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    DestroyModelMixin,
-)
 
-from typing import TYPE_CHECKING
 from league_planner.models.league import League
 from league_planner.models.match import Match
 from league_planner.models.team import Team
@@ -23,9 +23,6 @@ from league_planner.pagination import Pagination
 from league_planner.permissions import IsLeagueOwner
 from league_planner.serializers.league import LeagueSerializer
 from league_planner.serializers.team import ScoreboardSerializer
-
-if TYPE_CHECKING:
-    from typing import Any, Self
 
 
 class LeagueViewSet(
@@ -44,7 +41,7 @@ class LeagueViewSet(
     POINTS_PER_DRAW = 1
     POINTS_PER_LOSE = 0
 
-    def create(self: "Self", request: "Request", *args: "Any", **kwargs: "Any") -> "Response":
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         request.data["owner"] = request.user.pk
         return super().create(request, *args, **kwargs)
 
@@ -53,7 +50,7 @@ class LeagueViewSet(
         detail=False,
         url_path=r"(?P<league_id>\w+)/scoreboard",
     )
-    def scoreboard(self: "Self", request: "Request", league_id: int) -> "Response":
+    def scoreboard(self, request: Request, league_id: int) -> Response:
         teams_queryset = self.teams_queryset(league_id)
         teams_to_points_map = {team.id: [0, 0] for team in teams_queryset}
         matches_with_points_qs = self.matches_with_points_queryset(league_id)
@@ -79,10 +76,10 @@ class LeagueViewSet(
         return Response(data=rest_response_data, status=status.HTTP_200_OK)
 
     @staticmethod
-    def teams_queryset(league_id: int) -> "QuerySet":
+    def teams_queryset(league_id: int) -> QuerySet:
         return Team.objects.filter(league_id=league_id).all()
 
-    def matches_with_points_queryset(self: "Self", league_id: int) -> "QuerySet":
+    def matches_with_points_queryset(self, league_id: int) -> QuerySet:
         return Match.objects.filter(league_id=league_id).annotate(
             host_points=Case(
                 When(host_score__gt=F("visitor_score"), then=Value(self.POINTS_PER_WIN)),
@@ -93,5 +90,5 @@ class LeagueViewSet(
                 When(visitor_score__gt=F("host_score"), then=Value(self.POINTS_PER_WIN)),
                 When(visitor_score=F("host_score"), then=Value(self.POINTS_PER_DRAW)),
                 default=Value(self.POINTS_PER_LOSE),
-            )
+            ),
         )

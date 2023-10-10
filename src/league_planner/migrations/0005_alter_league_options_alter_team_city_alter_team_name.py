@@ -4,24 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('league_planner', '0004_alter_league_owner'),
+        ("league_planner", "0004_alter_league_owner"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='league',
-            options={'ordering': ['id']},
+            name="league",
+            options={"ordering": ["id"]},
         ),
         migrations.AlterField(
-            model_name='team',
-            name='city',
+            model_name="team",
+            name="city",
             field=models.CharField(default=None, max_length=50),
         ),
         migrations.AlterField(
-            model_name='team',
-            name='name',
+            model_name="team",
+            name="name",
             field=models.CharField(default=None, max_length=50, unique=True),
         ),
     ]

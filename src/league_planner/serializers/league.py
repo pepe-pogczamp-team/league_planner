@@ -5,7 +5,7 @@ from league_planner.models.league import League
 
 
 class LeagueSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(read_only=True)  # noqa: A003
     name = serializers.CharField()
     owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
