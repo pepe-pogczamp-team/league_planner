@@ -71,6 +71,7 @@ ignore_unused = [
     "ipython",
     "poetry-dynamic-versioning",
     "psycopg2-binary",
+    "pytest-cov",
 
     # used in Dockerfile
     "dumb-init",
